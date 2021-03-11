@@ -1,5 +1,9 @@
 import random
 import discord
+from replit import db
+from user import updateRolls
+from user import collectionAdd
+from datetime import datetime
 import pokemoncard
 
 def getCard(): 
@@ -9,10 +13,13 @@ def getCard():
   elif(rand<24): cardType="uncommon"
   elif(rand<26): cardType="rare"
   else: cardType="rare holo"
-  cardVar = random.choice(pokemoncard.cards.get(cardType))
+
+  # cardVar = random.choice(pokemoncard.cardsByRarity.get(cardType)) # replacing with new usage
+  
+  cardVar = random.choice(pokemoncard.byRarity(cardType))
   return cardVar
 
-def embedCard(message, cardVar):
+def embedCard(cardVar):
   title = ""
 
   if cardVar.rarity.lower() == "rare holo": title = "You unpacked a Holo Rare "+cardVar.name+"!"
@@ -22,7 +29,19 @@ def embedCard(message, cardVar):
   embedVar.set_image(url=cardVar.imgurl)
   return embedVar
 
-
 async def card(message):
+  await message.channel.send(embed=embedCard(cardVar = getCard()))
+
+
+async def card1(message): # building so that it will save and also limit rolls
   
-      await message.channel.send(embed=embedCard(message=message, cardVar=getCard()))
+  rolls = updateRolls(message.author, datetime.today())
+  if rolls != 0:
+    card = getCard()
+    collectionAdd(db[message.author.id], card)
+    await message.channel.send(embed=embedCard(cardVar=card))
+    db[message.author.id].rolls -= 1
+  else:
+    await message.channel.send(message="You cannot do this command")
+
+  await message.channel.send("You have "+rolls+"rolls left.")
