@@ -18,6 +18,9 @@ prefix = "c."
 async def on_ready():
   print("We have logged in as {0.user}".format(client))
   # client.change_Presence(status=discord.Status.idle, activity=discord.Game("Pokemon Cards"))
+  #client.change_Presence(status=)
+  game = discord.Game("c.card")
+  await client.change_presence(status=discord.Status.online, activity=game)
   pokemoncard.initializeCards()
 
 # on message event

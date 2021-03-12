@@ -19,7 +19,7 @@ def getCard():
   cardVar = random.choice(pokemoncard.byRarity(cardType))
   return cardVar
 
-def embedCard(cardVar):
+def embedCard(author, cardVar):
   title = ""
 
   if cardVar.rarity.lower() == "rare holo": title = "You unpacked a Holo Rare "+cardVar.name+"!"
@@ -27,10 +27,12 @@ def embedCard(cardVar):
 
   embedVar = discord.Embed(title=title)
   embedVar.set_image(url=cardVar.imgurl)
+  embedVar.set_author(name=author.display_name, icon_url=author.avatar_url)
+
   return embedVar
 
 async def card(message):
-  await message.channel.send(embed=embedCard(cardVar = getCard()))
+  await message.channel.send(embed=embedCard(author=message.author, cardVar = getCard()))
 
 
 async def card1(message): # building so that it will save and also limit rolls
