@@ -1,29 +1,28 @@
 import discord
 import os
 import pokemoncard
-import random
-from replit import db # for database
 from keep_alive import keep_alive
+from replit import db
 
-
-# import commands
+# Import commands
 from Commands.card import card
+from Commands.card import card2
+from Commands.collection import collection
 
-
+# Global Variables
 client = discord.Client()
-
 prefix = "c."
 
+# Starting the bot
 @client.event
 async def on_ready():
   print("We have logged in as {0.user}".format(client))
-  # client.change_Presence(status=discord.Status.idle, activity=discord.Game("Pokemon Cards"))
-  #client.change_Presence(status=)
   game = discord.Game("c.card")
   await client.change_presence(status=discord.Status.online, activity=game)
   pokemoncard.initializeCards()
+  # del db["381953351186907139t"] # TESTING: DELETE
 
-# on message event
+# On message event
 @client.event
 async def on_message(message):
   content = message.content.lower();
@@ -34,8 +33,11 @@ async def on_message(message):
     
     content = content.replace(prefix, "", 1)
     if(content.startswith("card")):
-      await card(message)
-    
+      # await card(message)
+      await card2(message)
+    elif content.startswith("col") or content.startswith("collection"):
+      await collection(message)
+
 
 keep_alive()
 client.run(os.getenv("TOKEN"))

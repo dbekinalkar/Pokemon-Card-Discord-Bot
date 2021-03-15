@@ -1,9 +1,12 @@
 import random
 import discord
-from replit import db
-from user import updateRolls
-from user import collectionAdd
-from datetime import datetime
+#from user import updateRolls
+#from user import collectionAdd
+from db import freePacks
+from db import updatePacks
+from db import getPacks
+from db import addToCollection
+import time
 import pokemoncard
 
 def getCard(): 
@@ -35,15 +38,34 @@ async def card(message):
   await message.channel.send(embed=embedCard(author=message.author, cardVar = getCard()))
 
 
-async def card1(message): # building so that it will save and also limit rolls
+#async def card1(message): # building so that it will save and also limit rolls
   
-  rolls = updateRolls(message.author, datetime.today())
-  if rolls != 0:
-    card = getCard()
-    collectionAdd(db[message.author.id], card)
-    await message.channel.send(embed=embedCard(cardVar=card))
-    db[message.author.id].rolls -= 1
-  else:
-    await message.channel.send(message="You cannot do this command")
+  #rolls = updateRolls(message.author, datetime.today())
+  #if rolls != 0:
+  #  card = getCard()
+  #  collectionAdd(db[message.author.id], card)
+  #  await message.channel.send(embed=embedCard(cardVar=card))
+  #  db[message.author.id].rolls -= 1
+  #else:
+  #  await message.channel.send(message="You cannot do this command")
 
-  await message.channel.send("You have "+rolls+"rolls left.")
+  #await message.channel.send("You have "+rolls+"rolls left.")
+
+
+async def card2(message):
+  freePacks(message.author.id, time.time())
+  print(getPacks(message.author.id))
+  if getPacks(message.author.id) > 0:
+    updatePacks(message.author.id, int(-1))
+
+    card = getCard()
+    print(card)
+    addToCollection(message.author.id, card)
+    await message.channel.send(embed=embedCard(author=message.author, cardVar = card))
+
+  else:
+    await message.channel.send("<@"+str(message.author.id)+"> You cannot do this command")
+
+  m = " You have "+str(getPacks(message.author.id))+" packs left."
+  print(m)
+  await message.channel.send("<@"+str(message.author.id)+"> You have "+str(getPacks(message.author.id))+" packs left.")
