@@ -1,3 +1,9 @@
+# Check out this last line of code
+# Ensure that running 'c.card' multiple times does not decrease time for next card
+# db.py
+
+
+
 import discord
 import os
 import pokemoncard
@@ -5,9 +11,8 @@ from keep_alive import keep_alive
 from replit import db
 
 # Import commands
-from Commands.card import card
 from Commands.card import card2
-from Commands.collection import collection
+from Commands.collection import collection1
 
 # Global Variables
 client = discord.Client()
@@ -26,8 +31,6 @@ async def on_ready():
 @client.event
 async def on_message(message):
   content = message.content.lower();
-
-
   
   if(not message.author.bot and content[0:2] == prefix):
     
@@ -36,7 +39,7 @@ async def on_message(message):
       # await card(message)
       await card2(message)
     elif content.startswith("col") or content.startswith("collection"):
-      await collection(message)
+      await collection1(message)
 
 
 keep_alive()

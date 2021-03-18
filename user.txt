@@ -1,0 +1,7 @@
+
+Problem with Code: Cannot store User object into the databse
+Solution: Make the keys in the database just be DiscordID + "rolls" or "counter" or "collection"
+Also create just 1 list of all cards, makes it easier to look through when necessary
+  How: Recode that part so that the code for choosing a rare card will instead choose from a list of 1-16 for holo rare, 17-32 for rare, etc
+Also, when storing collection, make a dictionary of card_name:multiples_of_card
+  Prob wont be able to store card objects

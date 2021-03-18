@@ -2,14 +2,15 @@ import random
 import discord
 #from user import updateRolls
 #from user import collectionAdd
-from db import freePacks
+from db import freePacks2
 from db import updatePacks
 from db import getPacks
 from db import addToCollection
+from db import getTimeLeft
 import time
 import pokemoncard
 
-def getCard(): 
+def getCard(): # Not Used
   rand = random.randint(1, 27)
   cardType = ""
   if(rand<15): cardType="common"
@@ -19,10 +20,10 @@ def getCard():
 
   # cardVar = random.choice(pokemoncard.cardsByRarity.get(cardType)) # replacing with new usage
   
-  cardVar = random.choice(pokemoncard.byRarity(cardType))
+  cardVar = random.choice(pokemoncard.byRarity(pokemoncard.cards, cardType))
   return cardVar
 
-def embedCard(author, cardVar):
+def embedCard(author, cardVar): # Not Used
   title = ""
 
   if cardVar.rarity.lower() == "rare holo": title = "You unpacked a Holo Rare "+cardVar.name+"!"
@@ -34,38 +35,49 @@ def embedCard(author, cardVar):
 
   return embedVar
 
-async def card(message):
+async def card(message): # Not Used
   await message.channel.send(embed=embedCard(author=message.author, cardVar = getCard()))
 
 
-#async def card1(message): # building so that it will save and also limit rolls
-  
-  #rolls = updateRolls(message.author, datetime.today())
-  #if rolls != 0:
-  #  card = getCard()
-  #  collectionAdd(db[message.author.id], card)
-  #  await message.channel.send(embed=embedCard(cardVar=card))
-  #  db[message.author.id].rolls -= 1
-  #else:
-  #  await message.channel.send(message="You cannot do this command")
-
-  #await message.channel.send("You have "+rolls+"rolls left.")
-
-
 async def card2(message):
-  freePacks(message.author.id, time.time())
-  print(getPacks(message.author.id))
-  if getPacks(message.author.id) > 0:
-    updatePacks(message.author.id, int(-1))
 
-    card = getCard()
-    print(card)
-    addToCollection(message.author.id, card)
-    await message.channel.send(embed=embedCard(author=message.author, cardVar = card))
+  freePacks2(message.author.id, time.time()) # Update with free packs
+
+  if getPacks(message.author.id) > 0:
+    updatePacks(message.author.id, int(-1)) # Use 1 pack
+    
+    # Get a card
+
+    rand = random.randint(1, 27)
+    cardType = ""
+    if(rand<15): cardType="common"
+    elif(rand<24): cardType="uncommon"
+    elif(rand<26): cardType="rare"
+    else: cardType="rare holo"
+
+    card = random.choice(pokemoncard.byRarity(pokemoncard.cards, cardType))
+
+
+    addToCollection(message.author.id, card) # Add card to collection
+
+
+    # Build embed and send
+    title = ""
+
+    if card.rarity.lower() == "rare holo": 
+      title = "You unpacked a Holo Rare "+card.name+"!"
+    else: title = "You unpacked a "+card.name+"!"
+
+    embedVar = discord.Embed(title=title)
+    embedVar.set_image(url=card.imgurl)
+    embedVar.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+    embedVar.set_footer(text="You have "+str(int(getPacks(message.author.id)))+" packs left.")
+
+    
+    await message.channel.send(embed=embedVar)
 
   else:
-    await message.channel.send("<@"+str(message.author.id)+"> You cannot do this command")
+    await message.channel.send("<@"+str(message.author.id)+"> Wait "+str(int(getTimeLeft(message.author.id, time.time())//60))+" minutes"
+    +"\nYou have "+str(int(getPacks(message.author.id)))+" packs left.")
 
-  m = " You have "+str(getPacks(message.author.id))+" packs left."
-  print(m)
-  await message.channel.send("<@"+str(message.author.id)+"> You have "+str(getPacks(message.author.id))+" packs left.")
+  # await message.channel.send("<@"+str(message.author.id)+"> You have "+str(int(getPacks(message.author.id)))+" packs left.")
