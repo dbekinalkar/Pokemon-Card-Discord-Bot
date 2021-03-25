@@ -1,7 +1,6 @@
 import random
 import discord
-#from user import updateRolls
-#from user import collectionAdd
+
 from db import freePacks2
 from db import updatePacks
 from db import getPacks

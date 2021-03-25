@@ -7,7 +7,7 @@ from pokemoncard import byRarity
 async def collection(message):
 
   col = db.getCollection(message.author.id)
-  
+
 
   embed = discord.Embed(title="Collection")
   embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
@@ -22,7 +22,7 @@ async def collection(message):
 
 
 async def collection1(message):
-  col = db.getCollection(message.author.id) 
+  col = db.getCollection(message.author.id)
 
 
   embed = discord.Embed(title="Collection") # Building blank embed
@@ -38,11 +38,11 @@ async def collection1(message):
     colByRarity = byRarity(cardCol, rarity) # Finding the cards of only this rarity
 
     if len(colByRarity) > 0:
-      field=rarity.title()
+      fieldName="["+pokemoncard.rarities[rarity]+"] "+rarity.title()
       value=""
       for card in colByRarity:
         value+=card.name + " [x"+str(col[card.name])+"]\n"
 
-      embed.add_field(name = field, value = value)
+      embed.add_field(name = fieldName, value = value)
 
   await message.channel.send(embed=embed)
